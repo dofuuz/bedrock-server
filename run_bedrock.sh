@@ -26,6 +26,7 @@ fi
 # Check latest version
 echo "Checking for the latest version..."
 VersionHtml=download/version.html
+rm -f "$VersionHtml"
 curl -LsS -o "$VersionHtml" https://minecraft.net/en-us/download/server/bedrock/
 ServerUrl=$(grep -o 'https://minecraft.azureedge.net/bin-linux/[^"]*' "$VersionHtml")
 if [ "$?" != 0 ]; then
