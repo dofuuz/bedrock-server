@@ -4,19 +4,18 @@
 # https://github.com/dofuuz/bedrock-server
 
 
-VersionTxt=server/version.txt
-CurrentVer=$(cat "$VersionTxt" 2> /dev/null)
-
 mkdir -p backup
 mkdir -p download
 
+VersionTxt=server/version.txt
+CurrentVer=$(cat "$VersionTxt" 2> /dev/null)
 
 # Create backup
 if [ -d "server" ]; then
     Timestamp=$(date +%Y%m%d-%H%M%S)
-    BackupFile="backup/${Timestamp}_${CurrentVer}.tar.gz"
-    echo "Creating backup to $BackupFile"
-    tar -caf "$BackupFile" \
+    BackupTgz="backup/${Timestamp}_${CurrentVer}.tar.gz"
+    echo "Creating backup to $BackupTgz"
+    tar -caf "$BackupTgz" \
         server/worlds \
         server/permissions.json \
         server/server.properties \
@@ -26,13 +25,14 @@ fi
 
 # Check latest version
 echo "Checking for the latest version..."
-curl -LsS -o download/version.html https://minecraft.net/en-us/download/server/bedrock/
-URL=$(grep -o 'https://minecraft.azureedge.net/bin-linux/[^"]*' download/version.html)
+VersionHtml=download/version.html
+curl -LsS -o "$VersionHtml" https://minecraft.net/en-us/download/server/bedrock/
+ServerUrl=$(grep -o 'https://minecraft.azureedge.net/bin-linux/[^"]*' "$VersionHtml")
 if [ "$?" != 0 ]; then
     echo "WARNING: Unable to check version. Skipping update."
 else
-    DownloadZip=download/$(basename "$URL")
-    NewVer=$(basename "$URL" .zip)
+    ServerZip=download/$(basename "$ServerUrl")
+    NewVer=$(basename "$ServerUrl" .zip)
 
     # Check for Latest server is installed
     if [ "$CurrentVer" == "$NewVer" ]; then
@@ -40,12 +40,12 @@ else
     else
         # Download and install/update server
         echo "New version $NewVer is available."
-        echo "Downloading $URL"
-        curl -L -o "$DownloadZip" "$URL"
+        echo "Downloading $ServerUrl"
+        curl -L -o "$ServerZip" "$ServerUrl"
 
         echo "Extracting..."
-        unzip -oq "$DownloadZip" -x permissions.json server.properties whitelist.json -d server
-        unzip -nq "$DownloadZip" permissions.json server.properties whitelist.json -d server
+        unzip -oq "$ServerZip" -x permissions.json server.properties whitelist.json -d server
+        unzip -nq "$ServerZip" permissions.json server.properties whitelist.json -d server
         echo "$NewVer" > "$VersionTxt"
     fi
 fi
