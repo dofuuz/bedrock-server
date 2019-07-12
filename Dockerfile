@@ -1,8 +1,7 @@
-# Use phusion/baseimage as base image.
-FROM phusion/baseimage:0.11
+# Docker image for Minecraft Bedrock dedicated server
+# https://github.com/dofuuz/bedrock-server
 
-# Use baseimage-docker's init system.
-CMD ["/sbin/my_init"]
+FROM ubuntu:18.04
 
 # update packages and install dependencies
 RUN apt-get update \
@@ -19,4 +18,5 @@ VOLUME /opt/bedrock
 
 EXPOSE 19132/udp 19133/udp
 
-ENTRYPOINT /opt/run_bedrock.sh
+WORKDIR /opt/bedrock
+CMD ../run_bedrock.sh

@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
+# Minecraft Bedrock dedicated server helper script
+# Auto backup and update
+# https://github.com/dofuuz/bedrock-server
 
-cd /opt/bedrock
 
 mkdir -p backup
 mkdir -p download
