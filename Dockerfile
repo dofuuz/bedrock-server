@@ -1,11 +1,11 @@
 # Docker image for Minecraft Bedrock dedicated server
 # https://github.com/dofuuz/bedrock-server
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 # update packages and install dependencies
 RUN apt-get update \
-    && apt-get install -y unzip libcurl4 curl libssl1.1 nano \
+    && apt-get install -y unzip curl nano \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
