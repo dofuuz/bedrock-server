@@ -13,9 +13,9 @@ CurrentVer=$(cat "$VersionTxt" 2> /dev/null)
 # Create backup
 if [ -d "server" ]; then
     Timestamp=$(date +%Y%m%d-%H%M%S)
-    BackupTgz="backup/${Timestamp}_${CurrentVer}.tar.gz"
-    echo "Creating backup to $BackupTgz"
-    tar -caf "$BackupTgz" \
+    BackupTar="backup/${Timestamp}_${CurrentVer}.tar"
+    echo "Creating backup to $BackupTar"
+    tar -cf "$BackupTar" \
         server/worlds \
         server/permissions.json \
         server/server.properties \
@@ -27,7 +27,7 @@ fi
 echo "Checking for the latest version..."
 VersionHtml=download/version.html
 rm -f "$VersionHtml"
-curl -LsS -o "$VersionHtml" https://minecraft.net/en-us/download/server/bedrock/
+curl -LsS -A "" -o "$VersionHtml" https://minecraft.net/en-us/download/server/bedrock/
 ServerUrl=$(grep -o 'https://minecraft.azureedge.net/bin-linux/[^"]*' "$VersionHtml")
 if [ "$?" != 0 ]; then
     echo "WARNING: Unable to check version. Skipping update."
@@ -47,6 +47,8 @@ else
         echo "Extracting..."
         unzip -oq "$ServerZip" -x permissions.json server.properties whitelist.json -d server
         unzip -nq "$ServerZip" permissions.json server.properties whitelist.json -d server
+
+        chmod +x server/bedrock_server
         echo "$NewVer" > "$VersionTxt"
     fi
 fi
